@@ -1,3 +1,5 @@
+@use "breakpoints" as *;
+
 // ============================================================================
 // Image Viewer Components
 // ============================================================================
@@ -6,7 +8,7 @@
 // Image Viewer Start Component
 // ----------------------------------------------------------------------------
 // Initial component displayed on record page when starting the image viewer
-// Provides entry point with image preview and CTAs to open accessible viewer or Universal Viewer
+// Provides entry point with image preview and CTAs to open the viewers
 
 .tna-image-viewer-start {
   padding: 1rem;
@@ -41,7 +43,7 @@
   padding: 2rem 0;
   box-sizing: border-box;
 
-  @media (min-width: 1000px) {
+  @include from(desktop) {
     height: 100%;
   }
 }
@@ -66,8 +68,7 @@
 // ----------------------------------------------------------------------------
 // Sets up full-height flex layout when image viewer header is present
 // Fixes header and footer in position on larger screen sizes
-// (@nationalarchives/frontend cant't be included in Sass files so media queries are used instead)
-// To remove the pinned header and footer, the styles within media queries can be removed.
+// To remove the pinned header and footer, the styles within from(desktop) can be removed.
 
 body:has(.tna-image-viewer-layout__header) {
   min-height: 100vh;
@@ -101,7 +102,7 @@ body:has(.tna-image-viewer-layout__header) main {
 // Accommodates back link, pagination/navigation, or back link
 
 .tna-image-viewer-layout__footer .tna-container {
-  @media (min-width: 1000px) {
+  @include from(desktop) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     align-items: center;
@@ -131,19 +132,23 @@ body:has(.tna-image-viewer-layout__header) main {
 // Full-height flex layout for individual image display pages
 // Ensures images are centered both horizontally and vertically
 
-@media (min-width: 1000px) {
+@include from(desktop) {
   body:has(.tna-image-viewer-image__image) main {
     display: flex;
     flex-direction: column;
   }
 
   body:has(.tna-image-viewer-image__image) .tna-image-viewer-layout__content {
+    // Room for overlay prev/next so the image stays fully visible between them
+    --uv-fallback-nav-gutter: 12rem;
+
     flex: 1;
     min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    // overflow: hidden;
+    position: relative;
 
     .tna-section,
     .tna-container,
@@ -152,6 +157,12 @@ body:has(.tna-image-viewer-layout__header) main {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .tna-container {
+      padding-inline: var(--uv-fallback-nav-gutter);
+      box-sizing: border-box;
+      width: 100%;
     }
   }
 
@@ -166,12 +177,20 @@ body:has(.tna-image-viewer-layout__header) main {
   align-items: center;
   gap: 1rem;
 
-  @media (min-width: 1000px) {
+  @include from(desktop) {
     position: absolute;
+    z-index: 1;
     top: 33vh;
     left: 0;
     right: 0;
     transform: translateY(-50%);
+    // Full-width strip stays above the image for hit-testing on the buttons,
+    // but clicks in the gap pass through to the page underneath.
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
   }
 }
 
@@ -183,7 +202,6 @@ body:has(.tna-image-viewer-layout__header) main {
 // Image Viewer Grid Styling
 // ----------------------------------------------------------------------------
 // Remove max-width from index grid container
-
 .tna-image-viewer__grid {
   background-color: #323334;
 

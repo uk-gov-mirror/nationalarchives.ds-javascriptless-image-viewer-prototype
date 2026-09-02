@@ -10,6 +10,12 @@
 {% set theme = 'dark' %}
 {% set themeAccent = 'black' %}
 
+{% block stylesheets %}
+  {{ super() }}
+  <link rel="stylesheet" href="/universalviewer/uv.css">
+  <link rel="stylesheet" href="/public/stylesheets/viewer-overrides.css">
+{% endblock %}
+
 {% block header %}
   <header class="tna-header tna-image-viewer-layout__header">
     <div class="tna-container tna-container--max">
