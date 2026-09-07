@@ -2,6 +2,11 @@
   "@context": "http://iiif.io/api/presentation/3/context.json",
   "id": "/public/iiif/adm-177-5/manifest.json",
   "type": "Manifest",
+  "label": {
+    "en": [
+      "ADM 177/5 — Admiralty: Navy Lists, Confidential Edition"
+    ]
+  },
   "summary": {
     "en": [
       "Mock IIIF Presentation API 3 manifesto for the progressive-enhancement prototype. Uses three local sample images repeated across multiple canvases for navigation testing (not a real IIIF Image API)."
