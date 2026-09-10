@@ -1,0 +1,98 @@
+@use "breakpoints" as *;
+
+// ----------------------------------------------------------------------------
+// Universal Viewer overrides
+// ----------------------------------------------------------------------------
+// Loaded after /universalviewer/uv.css on progressively enhanced pages.
+// Scoped under .tna-universal-viewer; !important only where UV sets inline
+// sizes or deep stock rules we need to beat.
+//
+// Tunables
+// --------
+// --uv-thumb-width          One-column thumbnail width
+// --uv-grid-left-width-open Left panel column width (must fit thumb + label)
+
+.tna-universal-viewer {
+  --uv-thumb-width: 220px;
+  --uv-grid-left-width-open: 400px;
+
+  flex: 1 1 auto;
+  width: 100%;
+  height: calc(100dvh - 14rem);
+  min-height: 28rem;
+  background: #000;
+
+  // Stock UV: .centerPanel is absolute + width 100%, so it runs under the open
+  // Contents panel and the previous-image control becomes unclickable.
+  @include from(tablet) {
+    .centerPanel {
+      position: relative;
+      width: auto;
+      height: 100%;
+      inset: auto;
+    }
+  }
+
+  // Keep OSD chrome (zoom, rotate, prev/next) above the canvas after pan/zoom
+  .openseadragon-container {
+    position: relative;
+
+    > .openseadragon-canvas {
+      z-index: 0;
+    }
+
+    > div:not(.openseadragon-canvas) {
+      z-index: 1;
+    }
+  }
+
+  .paging.btn {
+    z-index: 2 !important;
+    pointer-events: auto !important;
+  }
+
+  // One-column thumbs: UV forces ~98px wraps; show full assets wider.
+  // (Two-up not used — pagingEnabled is false in image-viewer-enhanced.js.)
+  .thumbs {
+    width: calc(var(--uv-thumb-width) + 8rem) !important;
+  }
+
+  .thumb.oneCol {
+    grid-template-columns: var(--uv-thumb-width) 1fr !important;
+
+    .wrap {
+      width: var(--uv-thumb-width) !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible;
+
+      img {
+        width: 100% !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: unset;
+        display: block;
+      }
+    }
+  }
+}
+
+// Page chrome once progressive enhancement has mounted UV
+body:has(.tna-image-viewer-enhanced--active) {
+  // overflow: hidden;
+
+  main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+}
+
+.tna-image-viewer-enhanced--active {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}

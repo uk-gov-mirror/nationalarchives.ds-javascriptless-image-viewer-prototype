@@ -1,0 +1,85 @@
+{% extends 'layouts/image-viewer-base.html' %}
+
+{#
+  Progressive enhancement of the accessible image viewer with Universal Viewer.
+
+  Without JS: same experience as image-viewer-image.html.
+  With JS: the fallback is hidden and UV loads the mock IIIF manifest, opening
+  on the canvas for this page (data-canvas-index), unless #?cv= is already set.
+
+  Mock manifest: /public/iiif/adm-177-5/manifest.json
+#}
+
+{% set previousPage = previousPage | default('/image-viewer-enhanced-0281') %}
+{% set nextPage = nextPage | default('/image-viewer-enhanced-0006') %}
+{% set canvasIndex = canvasIndex | default(0) %}
+{% set imageSrc = imageSrc | default('/public/img/0006-full-size.jpg') %}
+{% set imageClass = imageClass | default('') %}
+{% set imageLabel = imageLabel | default('Image 1 of 1849') %}
+
+{% set useLocalManifest = true %}
+
+{% set localManifestUrl = '/public/iiif/adm-177-5/manifest.json' %}
+{% set remoteManifestUrl = 'https://wellcomelibrary.org/iiif/b18035723/manifest' %}
+
+{% set manifestUrl = localManifestUrl if useLocalManifest else remoteManifestUrl %}
+
+{% block afterHeader %}
+  <noscript>
+    {{ tnaWarning({
+      classes: "tna-!--no-margin-top",
+      headingLevel: 2,
+      body: "<p><strong>You are viewing a low-resolution preview of this record</strong></p> <p class='tna-!--no-margin-top'>Please enable JavaScript to view at a higher resolution.</p>"
+    }) }}
+  </noscript>
+{% endblock %}
+
+{% block mainContent %}
+  <div
+    class="tna-theme-dark tna-image-viewer-layout__content tna-image-viewer-enhanced"
+    data-uv-enhance
+    data-iiif-manifest="{{ manifestUrl }}"
+    data-uv-login-url="/sign-in"
+    data-canvas-index="{{ canvasIndex }}"
+  >
+
+    {# ---- No-JS (and pre-enhancement) fallback ---- #}
+    <div class="tna-section" data-uv-fallback>
+      <div class="tna-image-viewer-image__navigation">
+        {{ tnaButton({
+          text: "Previous image",
+          href: previousPage,
+          icon: "arrow-left"
+        }) }}
+
+        {{ tnaButton({
+          text: "Next image",
+          href: nextPage,
+          icon: "arrow-right",
+          rightAlignIcon: true
+        }) }}
+      </div>
+
+      <div class="tna-container">
+        <div class="tna-column tna-column--full">
+          <figure class="tna-image-viewer-image__image">
+            <img src="{{ imageSrc }}" class="{{ imageClass }}" alt="{{ imageLabel }}">
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    {# ---- Universal Viewer mount (shown only when JS enhances) ---- #}
+    <div id="uv-enhanced" class="uv tna-universal-viewer tna-image-viewer-enhanced__uv" hidden></div>
+
+  </div>
+{% endblock %}
+
+{% block footerContent %}
+  <a href="/image-viewer-enhanced-list">View all images</a>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script src="/public/javascripts/image-viewer-enhanced.js"></script>
+{% endblock %}

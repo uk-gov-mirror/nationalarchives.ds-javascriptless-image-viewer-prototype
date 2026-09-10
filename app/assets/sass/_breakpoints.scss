@@ -1,0 +1,30 @@
+@use "sass:map";
+
+// ----------------------------------------------------------------------------
+// Breakpoints
+// ----------------------------------------------------------------------------
+// Shared across prototype.scss and viewer-overrides.scss.
+// Keep values in one place — do not hard-code min-widths in those files.
+//
+// tablet  — UV / mid layout (matches common 768px tablet floor)
+// desktop — image-viewer chrome (pinned header/footer, overlay nav)
+//
+// @TODO: Replace with TNA mixins when connected to real app
+
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1000px;
+
+$breakpoints: (
+  tablet: $breakpoint-tablet,
+  desktop: $breakpoint-desktop
+);
+
+@mixin from($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Unknown breakpoint `#{$name}`. Use one of: #{map.keys($breakpoints)}.";
+  }
+
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}

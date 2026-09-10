@@ -1,0 +1,76 @@
+{% extends 'layouts/image-viewer-base.html' %}
+
+{#
+  Thumbnail list for the progressively enhanced viewer.
+
+  Without JS: index grid linking into image-viewer-enhanced-* pages.
+  With JS: upgrades to Universal Viewer on the first canvas; viewer state
+  lives in the hash (#?cv=…) via UV's IIIFURLAdapter — the path is unchanged.
+#}
+
+{% block mainContent %}
+  <div
+    class="tna-theme-dark tna-image-viewer-layout__content tna-image-viewer-enhanced"
+    data-uv-enhance
+    data-iiif-manifest="/public/iiif/adm-177-5/manifest.json"
+    data-uv-login-url="/sign-in"
+    data-canvas-index="0"
+  >
+
+    {# ---- No-JS (and pre-enhancement) fallback ---- #}
+    <div class="tna-section" data-uv-fallback>
+      <div class="tna-container tna-container--max">
+        <div class="tna-column tna-column--full">
+
+          {{ tnaIndexGrid({
+            classes: "tna-image-viewer__grid tna-!--padding-vertical-s",
+            items: [
+              {
+                href: "image-viewer-enhanced-0006",
+                label: "Image 1 of 1849",
+                src: "/public/img/0006-thumbnail.jpg",
+                alt: "",
+                width: 600,
+                height: 400
+              },
+              {
+                href: "image-viewer-enhanced-0085",
+                label: "Image 2 of 1849",
+                src: "/public/img/0085-thumbnail.png",
+                alt: "",
+                width: 600,
+                height: 400
+              },
+              {
+                href: "image-viewer-enhanced-0281",
+                label: "Image 3 of 1849",
+                src: "/public/img/0281-thumbnail.png",
+                alt: "",
+                width: 600,
+                height: 400
+              }
+            ],
+            columns: 4,
+            columnsMedium: 3,
+            columnsSmall: 2,
+            columnsTiny: 1
+          }) }}
+
+        </div>
+      </div>
+    </div>
+
+    {# ---- Universal Viewer mount (shown only when JS enhances) ---- #}
+    <div id="uv-enhanced" class="uv tna-universal-viewer tna-image-viewer-enhanced__uv" hidden></div>
+
+  </div>
+{% endblock %}
+
+{% block footerContent %}
+  <a href="/">Back to record description</a>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script src="/public/javascripts/image-viewer-enhanced.js"></script>
+{% endblock %}
